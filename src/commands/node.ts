@@ -32,11 +32,7 @@ interface CryptoInfo {
 export default class Node extends Command {
   static description = "describe the command here";
 
-  static examples = [
-    `$ drone hello
-hello world from ./src/hello.ts!
-`
-  ];
+  static examples = ["$ drone node"];
 
   static flags = {
     help: flags.help({ char: "h" })
