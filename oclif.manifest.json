@@ -1,0 +1,1 @@
+{"version":"0.0.1","commands":{"node":{"id":"node","description":"describe the command here","pluginName":"drone","pluginType":"core","aliases":[],"examples":["$ drone hello\nhello world from ./src/hello.ts!\n"],"flags":{"help":{"name":"help","type":"boolean","char":"h","description":"show CLI help","allowNo":false}},"args":[]}}}
