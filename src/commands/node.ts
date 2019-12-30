@@ -113,7 +113,7 @@ export default class Node extends Command {
 
     this.log("All right, enjoy!");
     this.log("Enter the following command to start your chain");
-    this.log("$ cd muta-chain && cargo run");
+    this.log(`$ cd ${info.name} && cargo run`);
     this.log(
       "When the rust compilation is complete, access graphiql play your chain."
     );

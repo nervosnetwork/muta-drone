@@ -10,36 +10,33 @@ Standard Tooling for Muta framework
 ![](assets/code.png)
 
 <!-- toc -->
-
-- [Usage](#usage)
-- [Commands](#commands)
-  <!-- tocstop -->
+* [drone](#drone)
+* [Usage](#usage)
+* [Commands](#commands)
+<!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
-
 ```sh-session
-$ npm install -g drone
+$ npm install -g muta-drone
 $ drone COMMAND
 running command...
 $ drone (-v|--version|version)
-drone/0.0.1 darwin-x64 node-v12.4.0
+muta-drone/0.0.1 darwin-x64 node-v12.4.0
 $ drone --help [COMMAND]
 USAGE
   $ drone COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-
-- [`drone help [COMMAND]`](#drone-help-command)
-- [`drone node`](#drone-node)
-- [`drone service SERVICE_NAME`](#drone-service-service_name)
+* [`drone help [COMMAND]`](#drone-help-command)
+* [`drone node`](#drone-node)
+* [`drone service SERVICE_NAME`](#drone-service-service_name)
 
 ## `drone help [COMMAND]`
 
@@ -91,5 +88,4 @@ EXAMPLE
 ```
 
 _See code: [src/commands/service.ts](https://github.com/yejiayu/drone/blob/v0.0.1/src/commands/service.ts)_
-
 <!-- commandsstop -->
