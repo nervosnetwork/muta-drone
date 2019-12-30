@@ -23,7 +23,7 @@ $ npm install -g muta-drone
 $ drone COMMAND
 running command...
 $ drone (-v|--version|version)
-muta-drone/0.0.1 darwin-x64 node-v12.4.0
+muta-drone/0.0.2 darwin-x64 node-v12.4.0
 $ drone --help [COMMAND]
 USAGE
   $ drone COMMAND
@@ -70,7 +70,7 @@ EXAMPLE
   $ drone node
 ```
 
-_See code: [src/commands/node.ts](https://github.com/yejiayu/drone/blob/v0.0.1/src/commands/node.ts)_
+_See code: [src/commands/node.ts](https://github.com/yejiayu/drone/blob/v0.0.2/src/commands/node.ts)_
 
 ## `drone service SERVICE_NAME`
 
@@ -87,5 +87,5 @@ EXAMPLE
   $ drone service hello
 ```
 
-_See code: [src/commands/service.ts](https://github.com/yejiayu/drone/blob/v0.0.1/src/commands/service.ts)_
+_See code: [src/commands/service.ts](https://github.com/yejiayu/drone/blob/v0.0.2/src/commands/service.ts)_
 <!-- commandsstop -->
