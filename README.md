@@ -30,6 +30,7 @@ USAGE
 <!-- commands -->
 * [`drone help [COMMAND]`](#drone-help-command)
 * [`drone node`](#drone-node)
+* [`drone service SERVICE_NAME`](#drone-service-service_name)
 
 ## `drone help [COMMAND]`
 
@@ -50,7 +51,7 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.3
 
 ## `drone node`
 
-describe the command here
+Create your blockchain with one click.
 
 ```
 USAGE
@@ -60,9 +61,25 @@ OPTIONS
   -h, --help  show CLI help
 
 EXAMPLE
-  $ drone hello
-  hello world from ./src/hello.ts!
+  $ drone node
 ```
 
 _See code: [src/commands/node.ts](https://github.com/yejiayu/drone/blob/v0.0.1/src/commands/node.ts)_
+
+## `drone service SERVICE_NAME`
+
+Crate servive template
+
+```
+USAGE
+  $ drone service SERVICE_NAME
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ drone service hello
+```
+
+_See code: [src/commands/service.ts](https://github.com/yejiayu/drone/blob/v0.0.1/src/commands/service.ts)_
 <!-- commandsstop -->

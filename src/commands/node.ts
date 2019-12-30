@@ -1,18 +1,15 @@
-import { Command, flags } from "@oclif/command";
-import * as shelljs from "shelljs";
-import * as os from "os";
-import * as util from "util";
 import * as path from "path";
 import * as fs from "fs";
+import { randomBytes } from "crypto";
+import { Command, flags } from "@oclif/command";
+
 const TOML = require("@iarna/toml");
-const { randomBytes } = require("crypto");
 const secp256k1 = require("secp256k1");
 const hex = require("hex");
 const inquirer = require("inquirer");
-const download = require("download-git-repo");
 const keccak256 = require("keccak256");
 
-const asyncDownload = util.promisify(download);
+import { downloadTemplate, NODE_TEMPLATE } from "../util";
 
 const U64_MAX = 1024 * 1024 * 1024 * 1024;
 
@@ -30,7 +27,7 @@ interface CryptoInfo {
 }
 
 export default class Node extends Command {
-  static description = "describe the command here";
+  static description = "Create your blockchain with one click.";
 
   static examples = ["$ drone node"];
 
@@ -39,7 +36,7 @@ export default class Node extends Command {
   };
 
   async run() {
-    const { args, flags } = this.parse(Node);
+    this.parse(Node);
 
     const answers = await inquirer.prompt([
       {
@@ -86,13 +83,13 @@ export default class Node extends Command {
       info.veriferSet.push(info.cryptoInfo.address);
     }
 
-    console.log("Downloading template....");
-    const templatePath = path.join(os.tmpdir(), "muta");
-    await asyncDownload("yejiayu/muta-template", templatePath);
-
-    console.log("Copying template....");
     const rootPath = path.join(process.cwd(), info.name);
-    shelljs.cp("-r", path.join(templatePath, "node-template"), rootPath);
+    if (fs.existsSync(rootPath)) {
+      this.error(`the same name already exists. ${rootPath}`);
+      this.exit(1);
+    }
+
+    await downloadTemplate(NODE_TEMPLATE, rootPath);
 
     // modify chain config
     const chainConfigPath = path.join(rootPath, "config/chain.toml");
