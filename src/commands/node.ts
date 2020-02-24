@@ -15,15 +15,9 @@ const U64_MAX = 1024 * 1024 * 1024 * 1024;
 
 interface NodeInfo {
   name: string;
-  cryptoInfo: CryptoInfo;
   chainID: string;
   cyclesLimit: number;
-  veriferSet: string[];
-}
-
-interface CryptoInfo {
-  privkey: string;
-  address: string;
+  blockInterval: number;
 }
 
 export default class Node extends Command {
@@ -53,35 +47,24 @@ export default class Node extends Command {
       },
       {
         type: "input",
-        name: "privkey",
-        message:
-          "Private key of this node (secp256k1) (default: random generation)"
-      },
-      {
-        type: "input",
-        name: "veriferSet",
-        message: "Verifier's address set, except you (eg. [0x1..., 0x2..])",
-        default: []
-      },
-      {
-        type: "input",
         name: "cyclesLimit",
         message: "cycles limit",
         default: U64_MAX
-      }
+      },
+      {
+        type: "input",
+        name: "blockInterval",
+        message: "The interval of block (millisecond), should be greater than 500. (default: 3000)",
+        default: 3000
+      },
     ]);
 
     let info: NodeInfo = {
       name: answers.name,
-      cryptoInfo: this.getPrivkey(answers.privkey),
       chainID: answers.chainID === "" ? this.randomChainID() : answers.chainID,
       cyclesLimit: answers.cyclesLimit,
-      veriferSet: answers.veriferSet
+      blockInterval: answers.blockInterval,
     };
-
-    if (!info.veriferSet.find(s => s === info.cryptoInfo.address)) {
-      info.veriferSet.push(info.cryptoInfo.address);
-    }
 
     const rootPath = path.join(process.cwd(), info.name);
     if (fs.existsSync(rootPath)) {
@@ -89,27 +72,28 @@ export default class Node extends Command {
       this.exit(1);
     }
 
+    if (info.blockInterval < 500) {
+      this.error(`the interval of block should be greater than 500`);
+      this.exit(1);
+    }
+
     await downloadTemplate(NODE_TEMPLATE, rootPath);
-
-    // modify chain config
-    const chainConfigPath = path.join(rootPath, "config/chain.toml");
-    const configTomlStr = fs.readFileSync(chainConfigPath);
-    const config = TOML.parse(configTomlStr);
-    config.chain_id = info.chainID;
-    config.privkey = info.cryptoInfo.privkey;
-    config.consensus.cycles_limit = info.cyclesLimit;
-    config.consensus.verifier_list = info.veriferSet;
-
-    fs.writeFileSync(chainConfigPath, TOML.stringify(config));
 
     // modify genesis config
     const genesisConfigPath = path.join(rootPath, "config/genesis.toml");
     const genesisTomlStr = fs.readFileSync(genesisConfigPath);
-    const gensis = TOML.parse(genesisTomlStr);
-    (gensis.timestamp = Date.now()),
-      (gensis.prevhash = keccak256("").toString("hex"));
+    let genesis = TOML.parse(genesisTomlStr);
+    (genesis.timestamp = Date.now()),
+      (genesis.prevhash = keccak256("").toString("hex"));
+    let metadataPayloadStr = genesis.services[1].payload;
+    let metadataPayload = JSON.parse(metadataPayloadStr);
+    metadataPayload.chain_id = info.chainID;
+    metadataPayload.cycles_limit = Number(info.cyclesLimit);
+    metadataPayload.interval = Number(info.blockInterval);
+    metadataPayloadStr = JSON.stringify(metadataPayload);
+    genesis.services[1].payload = metadataPayloadStr;
 
-    fs.writeFileSync(genesisConfigPath, TOML.stringify(gensis));
+    fs.writeFileSync(genesisConfigPath, TOML.stringify(genesis));
 
     this.log("All right, enjoy!");
     this.log("Enter the following command to start your chain");
@@ -120,32 +104,8 @@ export default class Node extends Command {
     this.log("$ open http://localhost:8000/graphiql");
   }
 
-  getPrivkey(privkey: string): CryptoInfo {
-    let hex_privkey = privkey !== "" ? privkey : this.randomPrivkey();
-
-    // get the public key in a compressed format
-    const pubKey = secp256k1.publicKeyCreate(Buffer.from(hex_privkey, "hex"));
-
-    return {
-      privkey: hex_privkey,
-      address: keccak256(pubKey)
-        .slice(0, 20)
-        .toString("hex")
-    };
-  }
-
   randomChainID(): string {
     const bytes = randomBytes(32);
     return keccak256(bytes).toString("hex");
-  }
-
-  randomPrivkey(): string {
-    // generate privKey
-    let privKey;
-    do {
-      privKey = randomBytes(32);
-    } while (!secp256k1.privateKeyVerify(privKey));
-
-    return privKey.toString("hex");
   }
 }
